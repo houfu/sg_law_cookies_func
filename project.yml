@@ -1,0 +1,9 @@
+parameters: {}
+environment: {}
+packages:
+    - name: email_support
+      functions:
+        - name: add_member
+          runtime: "python:default"
+          environment:
+            MAILGUN_API_KEY: ${MAILGUN_API_KEY}
