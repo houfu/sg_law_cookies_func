@@ -7,3 +7,7 @@ packages:
           runtime: "python:default"
           environment:
             MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+        - name: send_newsletter
+          runtime: "python:default"
+          environment:
+            MAILGUN_API_KEY: ${MAILGUN_API_KEY}
