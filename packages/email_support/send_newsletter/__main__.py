@@ -17,6 +17,9 @@ def main(args):
             "to": address,
             "subject": title,
             "html": content
+        },
+        headers={
+            "Content-Type": "application/json"
         }
     )
     return {
