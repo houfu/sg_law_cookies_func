@@ -3,7 +3,15 @@ environment: {}
 packages:
     - name: email_support
       functions:
+        - name: send_confirmation
+          runtime: "python:default"
+          environment:
+            MAILGUN_API_KEY: ${MAILGUN_API_KEY}
         - name: add_member
+          runtime: "python:default"
+          environment:
+            MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+        - name: unsubscribe_member
           runtime: "python:default"
           environment:
             MAILGUN_API_KEY: ${MAILGUN_API_KEY}
