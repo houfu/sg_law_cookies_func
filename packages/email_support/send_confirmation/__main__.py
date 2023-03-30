@@ -13,7 +13,7 @@ def main(args):
     salted_email_bytes = salted_email.encode("utf-8")
     hash_object = hashlib.sha256(salted_email_bytes)
     hash_hex = hash_object.hexdigest()
-    confirm_link = "http://localhost:1313/subscribe/?" + urlencode({'new_member': new_member, 'hash': hash_hex})
+    confirm_link = "http://cookies.your-amicus.app/subscribe/?" + urlencode({'new_member': new_member, 'hash': hash_hex})
     r = requests.post(
         "https://api.mailgun.net/v3/mg.your-amicus.app/messages",
         auth=("api", key),
