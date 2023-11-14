@@ -19,3 +19,15 @@ packages:
           runtime: "python:default"
           environment:
             MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+    - name: zeeker_support
+      actions:
+        - name: new_newsarticle
+          runtime: "python:default"
+          environment:
+            ZEEKER_URL: ${ZEEKER_URL}
+            ZEEKER_API_KEY: ${ZEEKER_API_KEY}
+        - name: new_cookie
+          runtime: "python:default"
+          environment:
+            ZEEKER_URL: ${ZEEKER_URL}
+            ZEEKER_API_KEY: ${ZEEKER_API_KEY}
