@@ -18,7 +18,7 @@ def main(args):
         json={
             "resource": {
                 "package_id": "sg-law-cookies",
-                "url": cookie.resource_url,
+                "url": str(cookie.resource_url),
                 "description": f"SG Law Cookies, an algorithmically produced digest of legal news in Singapore, "
                 f"for {cookie.published_date.strftime('%d %B %Y')}",
             },
