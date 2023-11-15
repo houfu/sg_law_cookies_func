@@ -13,7 +13,7 @@ class SGLawCookie(BaseModel):
 
 def main(args):
     cookie = SGLawCookie.model_validate_json(args["content"])
-    requests.post(
+    response = requests.post(
         f"https://{os.getenv('ZEEKER_URL')}/api/3/action/datastore_create",
         json={
             "resource": {
@@ -21,6 +21,7 @@ def main(args):
                 "url": str(cookie.resource_url),
                 "description": f"SG Law Cookies, an algorithmically produced digest of legal news in Singapore, "
                 f"for {cookie.published_date.strftime('%d %B %Y')}",
+                "name": f"SG Law Cookies ({cookie.published_date.strftime('%d %B %Y')})"
             },
             "fields": [
                 {"id": "date_published", "type": "date"},
@@ -38,3 +39,5 @@ def main(args):
             "Authorization": os.getenv("ZEEKER_API_KEY"),
         },
     )
+    response_json = response.json()
+    print(response_json['success'])
