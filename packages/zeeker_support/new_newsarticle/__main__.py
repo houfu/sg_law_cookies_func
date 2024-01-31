@@ -1,6 +1,5 @@
-import os
 import datetime
-from typing import Optional
+import os
 
 import requests
 from pydantic import BaseModel, AnyHttpUrl
@@ -12,7 +11,8 @@ class NewsArticle(BaseModel):
     source_link: AnyHttpUrl
     author: str
     date: datetime.datetime
-    summary: Optional[str]
+    summary: str
+    text: str
 
 
 def main(args):
@@ -29,11 +29,13 @@ def main(args):
             "fields": [
                 {"id": "date_published", "type": "date"},
                 {"id": "summary", "type": "text"},
+                {"id": "text", "type": "text"},
             ],
             "records": [
                 {
                     "date_published": article.date.strftime("%d %B %Y"),
                     "summary": article.summary,
+                    "text": article.text,
                 }
             ],
         },
