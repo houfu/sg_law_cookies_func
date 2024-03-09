@@ -13,31 +13,38 @@ class SGLawCookie(BaseModel):
 
 def main(args):
     cookie = SGLawCookie.model_validate_json(args["content"])
+    # Create resource
     response = requests.post(
-        f"https://{os.getenv('ZEEKER_URL')}/api/3/action/datastore_create",
+        f"https://{os.getenv('ZEEKER_URL')}/api/action/resource_create",
         json={
-            "resource": {
-                "package_id": "sg-law-cookies",
-                "url": str(cookie.resource_url),
-                "description": f"SG Law Cookies, an algorithmically produced digest of legal news in Singapore, "
-                f"for {cookie.published_date.strftime('%d %B %Y')}",
-                "name": f"SG Law Cookies ({cookie.published_date.strftime('%d %B %Y')})"
-            },
-            "fields": [
-                {"id": "date_published", "type": "date"},
-                {"id": "content", "type": "text"},
-            ],
-            "records": [
-                {
-                    "date_published": cookie.published_date.strftime("%d %B %Y"),
-                    "content": cookie.cookie_content,
-                }
-            ],
+            "package_id": "sg-law-cookies",
+            "url": str(cookie.resource_url),
+            "description": f"SG Law Cookies, an algorithmically produced digest of legal news in Singapore, "
+            f"for {cookie.published_date.strftime('%d %B %Y')}",
+            "name": f"SG Law Cookies ({cookie.published_date.strftime('%d %B %Y')})",
+            "format": "HTML",
         },
         headers={
             "Content-Type": "application/json",
-            "Authorization": os.getenv("ZEEKER_API_KEY"),
+            "X-CKAN-API-Key": os.getenv("ZEEKER_API_KEY"),
         },
     )
     response_json = response.json()
-    print(response_json['success'])
+    # If resource is created, create a view
+    if response_json["success"]:
+        resource_response = requests.post(
+            f"https://{os.getenv('ZEEKER_URL')}/api/action/resource_view_create",
+            json={
+                "resource_id": response_json,
+                "title": "Website view",
+                "view_type": "webpage_view",
+            },
+            headers={
+                "Content-Type": "application/json",
+                "X-CKAN-API-Key": os.getenv("ZEEKER_API_KEY"),
+            },
+        )
+        resource_response_json = resource_response.json()
+        print(resource_response_json["success"])
+    else:
+        print(False)
