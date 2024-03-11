@@ -30,12 +30,13 @@ def main(args):
         },
     )
     response_json = response.json()
+    resource_response_json = None
     # If resource is created, create a view
     if response_json["success"]:
         resource_response = requests.post(
             f"https://{os.getenv('ZEEKER_URL')}/api/action/resource_view_create",
             json={
-                "resource_id": response_json,
+                "resource_id": response_json["result"]["id"],
                 "title": "Website view",
                 "view_type": "webpage_view",
             },
@@ -48,3 +49,15 @@ def main(args):
         print(resource_response_json["success"])
     else:
         print(False)
+
+    if resource_response_json:
+        return {
+            "body": {
+                "success": resource_response_json["success"],
+                "error": resource_response_json["error"]
+                if resource_response_json["success"]
+                else None,
+            }
+        }
+    else:
+        return {"body": {"success": False, "error": response_json["error"]}}
