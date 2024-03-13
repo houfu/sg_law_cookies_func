@@ -61,7 +61,7 @@ def main(args):
                         "date_published": cookie.published_date.strftime("%d %B %Y"),
                         "title": f"SG Law Cookies ({cookie.published_date.strftime('%d %B %Y')})",
                         "content": cookie.cookie_content,
-                        "resource_url": cookie.resource_url
+                        "resource_url": cookie.resource_url,
                     },
                 ],
             },
@@ -70,10 +70,11 @@ def main(args):
                 "X-CKAN-API-Key": os.getenv("ZEEKER_API_KEY"),
             },
         )
-        if datastore_response["success"]:
+        datastore_response_json = datastore_response.json()
+        if datastore_response_json["success"]:
             return {"body": {"success": True}}
         else:
-            return {"body": {"success": False, "error": datastore_response["error"]}}
+            return {"body": {"success": False, "error": datastore_response_json["error"]}}
 
     else:
         return {"body": {"success": False, "error": resource_response_json["error"]}}
