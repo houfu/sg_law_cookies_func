@@ -51,7 +51,7 @@ def main(args):
     if resource_response_json["success"]:
         # Now add to Datastore
         datastore_response = requests.post(
-            f"https://{os.getenv('ZEEKER_URL')}/api/action/resource_create",
+            f"https://{os.getenv('ZEEKER_URL')}/api/action/datastore_upsert",
             json={
                 "resource_id": "e359c6c3-851a-44a2-ad4d-e319642c0098",
                 "method": "insert",
