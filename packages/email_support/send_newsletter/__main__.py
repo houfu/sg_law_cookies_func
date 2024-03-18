@@ -5,11 +5,12 @@ import requests
 address = "sg_law_cookies@mg.your-amicus.app"
 
 
-def main(args):
+def main(event, context):
+    print(f"[{context.activation_id}] Start processing event {context.function_name}")
     key = os.getenv('MAILGUN_API_KEY')
-    title = args.get('title')
-    content_html = args.get('content_html')
-    content_text = args.get('content_text')
+    title = event.get('title')
+    content_html = event.get('content_html')
+    content_text = event.get('content_text')
     r = requests.post(
         "https://api.mailgun.net/v3/mg.your-amicus.app/messages",
         auth=("api", key),
@@ -21,6 +22,8 @@ def main(args):
             "text": content_text
         }
     )
+    print(f"[{context.activation_id}] Response: {r.status_code} {r.json()}")
+    print(f"[{context.activation_id}] End processing event {context.function_name}")
     return {
         "body": {
             "message": r.json()['message'],
