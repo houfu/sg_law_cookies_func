@@ -1,3 +1,4 @@
+import logging
 import os
 
 import requests
@@ -6,7 +7,8 @@ address = "sg_law_cookies@mg.your-amicus.app"
 
 
 def main(event, context):
-    print(f"[{context.activation_id}] Start processing event {context.function_name}")
+    logging.basicConfig(format=f"%(asctime)s {context.activation_id} {context.function_name}: %(message)s")
+    logging.info(f"Start processing event {context.function_name}")
     key = os.getenv('MAILGUN_API_KEY')
     title = event.get('title')
     content_html = event.get('content_html')
@@ -22,8 +24,8 @@ def main(event, context):
             "text": content_text
         }
     )
-    print(f"[{context.activation_id}] Response: {r.status_code} {r.json()}")
-    print(f"[{context.activation_id}] End processing event {context.function_name}")
+    logging.info(f"Response: {r.status_code} {r.json()}")
+    logging.info(f"End processing event {context.function_name}")
     return {
         "body": {
             "message": r.json()['message'],

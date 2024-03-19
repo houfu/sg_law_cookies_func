@@ -1,5 +1,6 @@
 import datetime
 import os
+import logging
 
 import requests
 from pydantic import BaseModel, AnyHttpUrl
@@ -16,10 +17,13 @@ class NewsArticle(BaseModel):
 
 
 def main(event, context):
-    print(f"[{context.activation_id}] Start processing event {context.function_name}")
+    logging.basicConfig(
+        format=f"%(asctime)s {context.activation_id} {context.function_name}: %(message)s"
+    )
+    logging.info(f"Start processing event {context.function_name}")
     article = NewsArticle.model_validate_json(event["content"])
-    print(f"[{context.activation_id}] Validated content: {article.category} {article.title}")
-    print(f"[{context.activation_id}] Creating resource on CKAN")
+    logging.info(f"Validated content: {article.category} {article.title}")
+    logging.info(f"Creating resource on CKAN")
     response = requests.post(
         f"https://{os.getenv('ZEEKER_URL')}/api/action/resource_create",
         json={
@@ -36,7 +40,7 @@ def main(event, context):
     response_json = response.json()
     # If resource is created, create a view
     if response_json["success"]:
-        print(f"[{context.activation_id}] Created resource on CKAN: {response_json['result']['id']}")
+        logging.info(f"Created resource on CKAN: {response_json['result']['id']}")
         resource_response = requests.post(
             f"https://{os.getenv('ZEEKER_URL')}/api/action/resource_view_create",
             json={
@@ -51,11 +55,11 @@ def main(event, context):
         )
         resource_response_json = resource_response.json()
     else:
-        print(f"[{context.activation_id}] Failed to create resource on CKAN: {response_json['error']}")
+        logging.error(f"Failed to create resource on CKAN: {response_json['error']}")
         return {"body": {"success": False, "error": response_json["error"]}}
     if resource_response_json["success"]:
-        print(f"[{context.activation_id}] Created resource view on CKAN: {response_json['result']['id']}")
-        print(f"[{context.activation_id}] Creating new entry on Consolidated Datastore")
+        logging.info(f"Created resource view on CKAN: {response_json['result']['id']}")
+        logging.info(f"Creating new entry on Consolidated Datastore")
         datastore_response = requests.post(
             f"https://{os.getenv('ZEEKER_URL')}/api/action/datastore_upsert",
             json={
@@ -83,14 +87,18 @@ def main(event, context):
         )
         datastore_response_json = datastore_response.json()
         if datastore_response_json["success"]:
-            print(f"[{context.activation_id}] Successfully added article to datastore: {article.title}")
-            print(f"[{context.activation_id}] {context.function_name} successfully executed")
+            logging.info(f"Successfully added article to datastore: {article.title}")
+            logging.info(f"{context.function_name} successfully executed")
             return {"body": {"success": True}}
         else:
-            print(f"[{context.activation_id}] Failed to add article to datastore: {datastore_response_json['error']}")
+            logging.error(
+                f"Failed to add article to datastore: {datastore_response_json['error']}"
+            )
             return {
                 "body": {"success": False, "error": datastore_response_json["error"]}
             }
     else:
-        print(f"[{context.activation_id}] Failed to create resource view: {resource_response_json['error']}")
+        logging.error(
+            f"Failed to create resource view: {resource_response_json['error']}"
+        )
         return {"body": {"success": False, "error": resource_response_json["error"]}}
