@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import date
+from logging.handlers import SysLogHandler
 
 import requests
 from pydantic import BaseModel, AnyHttpUrl
@@ -13,13 +14,15 @@ class SGLawCookie(BaseModel):
 
 
 def main(event, context):
+    logger = logging.getLogger()
+    logger.addHandler(SysLogHandler())
     logging.basicConfig(
         format=f"%(asctime)s {context.activation_id} {context.function_name}: %(message)s"
     )
-    logging.info(f"Start processing event {context.function_name}")
+    logger.info(f"Start processing event {context.function_name}")
     cookie = SGLawCookie.model_validate_json(event["content"])
-    logging.info(f"Validated content: {cookie.resource_url}")
-    logging.info(f"Creating resource on CKAN")
+    logger.info(f"Validated content: {cookie.resource_url}")
+    logger.info(f"Creating resource on CKAN")
     response = requests.post(
         f"https://{os.getenv('ZEEKER_URL')}/api/action/resource_create",
         json={
@@ -38,7 +41,7 @@ def main(event, context):
     response_json = response.json()
     # If resource is created, create a view
     if response_json["success"]:
-        logging.info(f"Created resource on CKAN: {response_json['result']['id']}")
+        logger.info(f"Created resource on CKAN: {response_json['result']['id']}")
         resource_response = requests.post(
             f"https://{os.getenv('ZEEKER_URL')}/api/action/resource_view_create",
             json={
@@ -53,13 +56,13 @@ def main(event, context):
         )
         resource_response_json = resource_response.json()
     else:
-        logging.error(f"Failed to create resource on CKAN: {response_json['error']}")
+        logger.error(f"Failed to create resource on CKAN: {response_json['error']}")
         return {"body": {"success": False, "error": response_json["error"]}}
 
     if resource_response_json["success"]:
         # Now add to Datastore
-        logging.info(f"Created resource view on CKAN: {response_json['result']['id']}")
-        logging.info(f"Creating new entry on Consolidated Datastore")
+        logger.info(f"Created resource view on CKAN: {response_json['result']['id']}")
+        logger.info(f"Creating new entry on Consolidated Datastore")
         datastore_response = requests.post(
             f"https://{os.getenv('ZEEKER_URL')}/api/action/datastore_upsert",
             json={
@@ -82,13 +85,13 @@ def main(event, context):
         )
         datastore_response_json = datastore_response.json()
         if datastore_response_json["success"]:
-            logging.info(
+            logger.info(
                 f"Successfully added article to datastore: {cookie.resource_url}"
             )
-            logging.info(f"{context.function_name} successfully executed")
+            logger.info(f"{context.function_name} successfully executed")
             return {"body": {"success": True}}
         else:
-            logging.error(
+            logger.error(
                 f"[{context.activation_id}] Failed to add article to datastore: {datastore_response_json['error']}"
             )
             return {
@@ -96,5 +99,5 @@ def main(event, context):
             }
 
     else:
-        logging.error(f"Failed to create resource view on CKAN: {resource_response_json['error']}")
+        logger.error(f"Failed to create resource view on CKAN: {resource_response_json['error']}")
         return {"body": {"success": False, "error": resource_response_json["error"]}}
