@@ -1,36 +1,37 @@
-parameters: {}
-environment: {}
+parameters: { }
+environment:
+  LOG_DESTINATIONS: '[{"logtail":{"token":"9wvruHhDiJ1HWnpF5RDpaAnY"}}]'
 packages:
-    - name: email_support
-      functions:
-        - name: send_confirmation
-          runtime: "python:default"
-          environment:
-            MAILGUN_API_KEY: ${MAILGUN_API_KEY}
-        - name: add_member
-          runtime: "python:default"
-          environment:
-            MAILGUN_API_KEY: ${MAILGUN_API_KEY}
-        - name: unsubscribe_member
-          runtime: "python:default"
-          environment:
-            MAILGUN_API_KEY: ${MAILGUN_API_KEY}
-        - name: send_newsletter
-          runtime: "python:default"
-          environment:
-            MAILGUN_API_KEY: ${MAILGUN_API_KEY}
-            LOGTAIL_SOURCE_TOKEN: ${LOGTAIL_SOURCE_TOKEN}
-    - name: zeeker_support
-      actions:
-        - name: new_newsarticle
-          runtime: "python:default"
-          environment:
-            ZEEKER_URL: ${ZEEKER_URL}
-            ZEEKER_API_KEY: ${ZEEKER_API_KEY}
-            LOGTAIL_SOURCE_TOKEN: ${LOGTAIL_SOURCE_TOKEN}
-        - name: new_cookie
-          runtime: "python:default"
-          environment:
-            ZEEKER_URL: ${ZEEKER_URL}
-            ZEEKER_API_KEY: ${ZEEKER_API_KEY}
-            LOGTAIL_SOURCE_TOKEN: ${LOGTAIL_SOURCE_TOKEN}
+  - name: email_support
+    functions:
+      - name: send_confirmation
+        runtime: "python:default"
+        environment:
+          MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+      - name: add_member
+        runtime: "python:default"
+        environment:
+          MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+      - name: unsubscribe_member
+        runtime: "python:default"
+        environment:
+          MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+      - name: send_newsletter
+        runtime: "python:default"
+        environment:
+          MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+          LOGTAIL_SOURCE_TOKEN: ${LOGTAIL_SOURCE_TOKEN}
+  - name: zeeker_support
+    actions:
+      - name: new_newsarticle
+        runtime: "python:default"
+        environment:
+          ZEEKER_URL: ${ZEEKER_URL}
+          ZEEKER_API_KEY: ${ZEEKER_API_KEY}
+          LOGTAIL_SOURCE_TOKEN: ${LOGTAIL_SOURCE_TOKEN}
+      - name: new_cookie
+        runtime: "python:default"
+        environment:
+          ZEEKER_URL: ${ZEEKER_URL}
+          ZEEKER_API_KEY: ${ZEEKER_API_KEY}
+          LOGTAIL_SOURCE_TOKEN: ${LOGTAIL_SOURCE_TOKEN}
