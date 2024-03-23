@@ -18,6 +18,7 @@ class NewsArticle(BaseModel):
 
 def main(event, context):
     logging.basicConfig(
+        level=logging.INFO,
         format=f"%(asctime)s {context.activation_id} {context.function_name}: %(message)s"
     )
     logging.info(f"Start processing event {context.function_name}")
