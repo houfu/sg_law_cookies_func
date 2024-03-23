@@ -1,13 +1,21 @@
 import hashlib
+import logging
 import os
 
 import requests
 
+FUNCTION_NAME = 'cookies_add_member'
 
-def main(args):
+
+def main(event, context):
+    logging.basicConfig(
+        level=logging.INFO,
+        format=f"%(asctime)s {context.activation_id} {FUNCTION_NAME}: %(message)s"
+    )
     key = os.getenv('MAILGUN_API_KEY')
-    new_member = args.get('new_member')
-    hash_arg = args.get('hash')
+    new_member = event.get('new_member')
+    logging.info(f"Start processing: {new_member}")
+    hash_arg = event.get('hash')
     salted_email = "cookies" + new_member
     salted_email_bytes = salted_email.encode("utf-8")
     hash_object = hashlib.sha256(salted_email_bytes)
@@ -23,6 +31,7 @@ def main(args):
         }
     )
     if r.status_code == 200:
+        logging.info(f"Member {new_member} subscribed to SG Law Cookies")
         requests.post(
             "https://api.mailgun.net/v3/mg.your-amicus.app/messages",
             auth=("api", key),
@@ -33,9 +42,5 @@ def main(args):
                 "template": "welcome_sg_cookies"
             }
         )
-    return {
-        "body": {
-            "message": r.json()['message'],
-            "status_code": r.status_code
-        }
-    }
+    else:
+        logging.error(f"Error subscribing to SG Law Cookies: {r.json()['message']}")

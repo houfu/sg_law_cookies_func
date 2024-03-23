@@ -6,6 +6,8 @@ import requests
 from pydantic import BaseModel, AnyHttpUrl
 
 
+FUNCTION_NAME = "New_NewsArticle"
+
 class NewsArticle(BaseModel):
     category: str
     title: str
@@ -19,10 +21,10 @@ class NewsArticle(BaseModel):
 def main(event, context):
     logging.basicConfig(
         level=logging.INFO,
-        format=f"%(asctime)s {context.activation_id} {context.function_name}: %(message)s"
+        format=f"%(asctime)s {context.activation_id} {FUNCTION_NAME}: %(message)s"
     )
-    logging.info(f"Start processing event {context.function_name}")
-    article = NewsArticle.model_validate_json(event["content"])
+    logging.info(f"Start processing event")
+    article = NewsArticle.model_validate_json(event.get("content"))
     logging.info(f"Validated content: {article.category} {article.title}")
     logging.info(f"Creating resource on CKAN")
     response = requests.post(
