@@ -77,7 +77,7 @@ def main(event, context):
                         "author": article.author,
                         "summary": article.summary,
                         "category": article.category,
-                        "resource_url": article.source_link,
+                        "resource_url": str(article.source_link),
                         "zeeker_url": f"https://ckan.zeeker.sg/dataset/sg-law-news-articles/resource/"
                         f"{response_json['result']['id']}",
                     },

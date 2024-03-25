@@ -74,7 +74,7 @@ def main(event, context):
                         "date_published": cookie.published_date.strftime("%d %B %Y"),
                         "title": f"SG Law Cookies ({cookie.published_date.strftime('%d %B %Y')})",
                         "content": cookie.cookie_content,
-                        "resource_url": cookie.resource_url,
+                        "resource_url": str(cookie.resource_url),
                     },
                 ],
             },
