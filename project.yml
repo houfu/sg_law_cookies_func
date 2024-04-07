@@ -23,12 +23,12 @@ packages:
           LOGTAIL_SOURCE_TOKEN: ${LOGTAIL_SOURCE_TOKEN}
   - name: zeeker_support
     actions:
-      - name: new_newsarticle
-        runtime: "python:default"
-        environment:
-          ZEEKER_URL: ${ZEEKER_URL}
-          ZEEKER_API_KEY: ${ZEEKER_API_KEY}
-          LOGTAIL_SOURCE_TOKEN: ${LOGTAIL_SOURCE_TOKEN}
+#      - name: new_newsarticle
+#        runtime: "python:default"
+#        environment:
+#          ZEEKER_URL: ${ZEEKER_URL}
+#          ZEEKER_API_KEY: ${ZEEKER_API_KEY}
+#          LOGTAIL_SOURCE_TOKEN: ${LOGTAIL_SOURCE_TOKEN}
       - name: new_cookie
         runtime: "python:default"
         environment:

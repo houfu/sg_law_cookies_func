@@ -42,17 +42,11 @@ def main(event, context):
     # If resource is created, create a view
     if response_json["success"]:
         logging.info(f"Created resource on CKAN: {response_json['result']['id']}")
-        resource_response = requests.post(
-            f"https://{os.getenv('ZEEKER_URL')}/api/action/resource_view_create",
-            json={
-                "resource_id": response_json["result"]["id"],
-                "title": "Website view",
-                "view_type": "webpage_view",
-            },
-            headers={
-                "Content-Type": "application/json",
-                "X-CKAN-API-Key": os.getenv("ZEEKER_API_KEY"),
-            },
+        resource_response = requests.get(
+            f"https://n8n.zeeker.sg/webhook-test/446306a8-99a1-42b1-bda1-657df38efb17",
+            params={
+                "resource": response_json['result']['id']
+            }
         )
         resource_response_json = resource_response.json()
     else:
@@ -66,7 +60,7 @@ def main(event, context):
         datastore_response = requests.post(
             f"https://{os.getenv('ZEEKER_URL')}/api/action/datastore_upsert",
             json={
-                "resource_id": "e359c6c3-851a-44a2-ad4d-e319642c0098",
+                "resource_id": "f89215de-9770-41e7-ab80-4fe6993cb91f",
                 "method": "insert",
                 "force": "True",
                 "records": [
